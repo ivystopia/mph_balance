@@ -1,5 +1,7 @@
 #! /usr/bin/env python
 
+# Distributed under MIT license, please see LICENSE file
+
 import requests
 import argparse
 import json
