@@ -84,7 +84,7 @@ def main():
   fiat_value = get_value("btc", total, compare="gbp")
 
   # Print report
-  print("{:f} BTC (£{:.2f} GBP)".format(btc_value, round(fiat_value, 2)))
+  print("{:f} BTC (£{:.2f} GBP)".format(total, round(fiat_value, 2)))
 
 if __name__ == "__main__":
   main()
