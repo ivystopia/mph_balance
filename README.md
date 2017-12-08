@@ -15,5 +15,7 @@ Run the program like so:
 
 `./balance.py -a api_key`
 
+Default fiat currency is GBP. You can specify a different currency with the `-f` argument.
+
 # License
 MIT (See LICENSE file)

@@ -8,6 +8,7 @@ import json
 
 parser = argparse.ArgumentParser(description="Estimate total balance of a MPH account")
 parser.add_argument('-a', metavar='api_key', required=True, help='API key from account settings page')
+parser.add_argument('-f', metavar='fiat_currency', default='gbp', help='Which fiat currency to display total in')
 args = parser.parse_args()
 
 symbols = {
@@ -81,10 +82,10 @@ def main():
   for coin in coins:
     btc_value = get_value(coin, coins[coin])
     total = total + btc_value
-  fiat_value = get_value("btc", total, compare="gbp")
+  fiat_value = get_value("btc", total, compare=args.f)
 
   # Print report
-  print("{:f} BTC (£{:.2f} GBP)".format(total, round(fiat_value, 2)))
+  print("{:f} BTC ({:.2f} {})".format(total, round(fiat_value, 2), args.f))
 
 if __name__ == "__main__":
   main()
