@@ -15,7 +15,9 @@ Run the program like so:
 
 `./balance.py -a api_key`
 
-Default fiat currency is GBP. You can specify a different currency with the `-f` argument.
+Default fiat currency is GBP. You can specify a different currency with the `-f` argument (e.g. -f USD)
+
+Default crypto currency is BTC. You can specify a different currency with the `-c` argument (e.g. -c LTC)
 
 # License
 MIT (See LICENSE file)

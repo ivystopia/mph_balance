@@ -9,6 +9,7 @@ import json
 parser = argparse.ArgumentParser(description="Estimate total balance of a MPH account")
 parser.add_argument('-a', metavar='api_key', required=True, help='API key from account settings page')
 parser.add_argument('-f', metavar='fiat_currency', default='gbp', help='Which fiat currency to display total in')
+parser.add_argument('-c', metavar='currency', default='btc', help='Which exchange currency to display total in (default btc)')
 args = parser.parse_args()
 
 symbols = {
@@ -50,13 +51,13 @@ symbols = {
   "zencash": "ZEN"
 }
 
-def get_value(symbol, amount, compare="btc"):
+def get_value(symbol, amount, compare=args.c):
   """
-    Return total value of x amount of some coin (symbol) in another coin (compare)
+    Convert some amount of some coin, into the currency specified by -c
   """
-  if symbol.upper() == "BTC" and compare.upper() == "BTC":
+  if symbol.upper() == compare.upper():
     return amount
-  url = "https://api.cryptonator.com/api/ticker/{}-{}".format(symbol.lower(), compare)
+  url = "https://api.cryptonator.com/api/ticker/{}-{}".format(symbol.lower(), compare.lower())
   raw_response = requests.get(url).text
   response = json.loads(raw_response)
   price = response["ticker"]["price"]
@@ -83,12 +84,12 @@ def main():
      ])
     coins[symbol] = balance
 
-  # Get the total value in BTC of all the coin balances
-  btc_value = sum([get_value(coin, coins[coin]) for coin in coins])
-  fiat_value = get_value("btc", btc_value, compare=args.f)
+  # Get the total value of all the coin balances
+  value = sum([get_value(coin, coins[coin], args.c) for coin in coins])
+  fiat_value = get_value(args.c, value, args.f)
 
   # Print report
-  print("{:f} BTC ({:.2f} {})".format(btc_value, round(fiat_value, 2), args.f))
+  print("{:f} {} ({:.2f} {})".format(value, args.c.upper(), round(fiat_value, 2), args.f))
 
 if __name__ == "__main__":
   main()
