@@ -83,14 +83,11 @@ def main():
     coins[symbol] = balance
 
   # Get the total value in BTC of all the coin balances
-  total = 0
-  for coin in coins:
-    btc_value = get_value(coin, coins[coin])
-    total = total + btc_value
-  fiat_value = get_value("btc", total, compare=args.f)
+  btc_value = sum([get_value(coin, coins[coin]) for coin in coins])
+  fiat_value = get_value("btc", btc_value, compare=args.f)
 
   # Print report
-  print("{:f} BTC ({:.2f} {})".format(total, round(fiat_value, 2), args.f))
+  print("{:f} BTC ({:.2f} {})".format(btc_value, round(fiat_value, 2), args.f))
 
 if __name__ == "__main__":
   main()
