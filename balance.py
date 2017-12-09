@@ -48,6 +48,8 @@ def get_value(symbol, amount, compare="btc"):
   """
     Return total value of x amount of some coin (symbol) in another coin (compare)
   """
+  if symbol.upper() == "BTC" and compare.upper() == "BTC":
+    return amount
   url = "https://api.cryptonator.com/api/ticker/{}-{}".format(symbol.lower(), compare)
   raw_response = requests.get(url).text
   response = json.loads(raw_response)
