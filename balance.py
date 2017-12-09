@@ -5,11 +5,13 @@
 import requests
 import argparse
 import json
+import time
 
 parser = argparse.ArgumentParser(description="Estimate total balance of a MPH account")
 parser.add_argument('-a', metavar='api_key', required=True, help='API key from account settings page')
 parser.add_argument('-f', metavar='fiat_currency', default='gbp', help='Which fiat currency to display total in')
 parser.add_argument('-c', metavar='currency', default='btc', help='Which exchange currency to display total in (default btc)')
+parser.add_argument('-o', metavar='output', default='text', choices=["text", "csv"], help='Output format. "text" (default) or csv')
 args = parser.parse_args()
 
 symbols = {
@@ -89,7 +91,12 @@ def main():
   fiat_value = get_value(args.c, value, args.f)
 
   # Print report
-  print("{:f} {} ({:.2f} {})".format(value, args.c.upper(), round(fiat_value, 2), args.f))
+  if args.o == "text":
+    output_text = "{:f} {} ({:.2f} {})".format(value, args.c.upper(), round(fiat_value, 2), args.f)
+  elif args.o == "csv":
+    output_text = "{},{:f},{:.2f}".format(int(time.time()),value,round(fiat_value, 2))
+
+  print(output_text)
 
 if __name__ == "__main__":
   main()
