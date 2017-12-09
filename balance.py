@@ -78,7 +78,8 @@ def main():
       coin["confirmed"],
       coin["unconfirmed"],
       coin["ae_confirmed"],
-      coin["ae_unconfirmed"]
+      coin["ae_unconfirmed"],
+      coin["exchange"]
      ])
     coins[symbol] = balance
 
