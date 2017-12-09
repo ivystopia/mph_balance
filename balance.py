@@ -19,6 +19,9 @@ symbols = {
   "bitcoin-gold": "BTG",
   "dash": "DSH",
   "digibyte": "DGB",
+  "digibyte-groestl": "DGB",
+  "digibyte-skein": "DGB",
+  "digibyte-qubit": "DGB",
   "ethereum": "ETH",
   "ethereum-classic": "ETC",
   "expanse": "EXP",
@@ -33,6 +36,9 @@ symbols = {
   "monero": "XMR",
   "musicoin": "MUSIC",
   "myriadcoin": "XMY",
+  "myriadcoin-skein": "XMY",
+  "myriadcoin-groestl": "XMY",
+  "myriadcoin-yescrypt": "XMY",
   "sexcoin": "SXC",
   "siacoin": "SC",
   "startcoin": "START",
@@ -67,10 +73,7 @@ def main():
   # Parse the response into a basic dictionary keyed on coin name
   coins = {}
   for coin in response["getuserallbalances"]["data"]:
-    if "-" in coin["coin"]:
-      symbol = symbols[coin["coin"].split("-")[0]]
-    else:
-      symbol = symbols[coin["coin"]]
+    symbol = symbols[coin["coin"]]
     balance = sum([
       coin["confirmed"],
       coin["unconfirmed"],
