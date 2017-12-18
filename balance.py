@@ -8,15 +8,18 @@ import json
 import time
 
 
-filename = "apikey.txt"
+filename = "defaults.txt"
 f = open(filename, 'r')
-key = f.readline().rstrip()
+APIkey = f.readline().rstrip()
+Fiat = f.readline().rstrip()
+Crypto = f.readline().rstrip()
+Output = f.readline().rstrip()
 
 parser = argparse.ArgumentParser(description="Estimate total balance of a MPH account")
-parser.add_argument('-a', metavar='api_key', default = key, help='API key from account settings page')
-parser.add_argument('-f', metavar='fiat_currency', default='gbp', help='Which fiat currency to display total in')
-parser.add_argument('-c', metavar='currency', default='btc', help='Which exchange currency to display total in (default btc)')
-parser.add_argument('-o', metavar='output', default='text', choices=["text", "csv"], help='Output format. "text" (default) or csv')
+parser.add_argument('-a', metavar='api_key', default = APIkey, help='API key from account settings page')
+parser.add_argument('-f', metavar='fiat_currency', default=Fiat, help='Which fiat currency to display total in')
+parser.add_argument('-c', metavar='currency', default=Crypto, help='Which exchange currency to display total in (default btc)')
+parser.add_argument('-o', metavar='output', default=Output, choices=["text", "csv"], help='Output format. "text" (default) or csv')
 args = parser.parse_args()
 
 symbols = {
