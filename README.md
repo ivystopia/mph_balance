@@ -15,7 +15,7 @@ Put your API key in a blank text file named apikey.txt
 
 Run the program like so:
 
-`./balance.py
+python balance.py
 
 Default fiat currency is GBP. You can specify a different currency with the `-f` argument (e.g. -f USD)
 
