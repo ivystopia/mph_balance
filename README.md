@@ -11,9 +11,11 @@ Set up virtualenv (or use sudo for the following command if running globally)
 # Using
 Get your API key from your account details page: https://miningpoolhub.com/?page=account&action=edit
 
+Put your API key in a blank text file named apikey.txt
+
 Run the program like so:
 
-`./balance.py -a api_key`
+`./balance.py
 
 Default fiat currency is GBP. You can specify a different currency with the `-f` argument (e.g. -f USD)
 
