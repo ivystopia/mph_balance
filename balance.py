@@ -7,7 +7,7 @@ import argparse
 import json
 import time
 import csv
-import datetime 
+import datetime
 import os
 
 filename = "defaults.txt"
@@ -28,112 +28,115 @@ parser.add_argument('-o', metavar='output', default=Output, choices=["text", "cs
 args = parser.parse_args()
 
 symbols = {
-  "adzcoin": "ADZ",
-  "auroracoin": "AUR",
-  "bitcoin": "BTC",
-  "bitcoin-cash": "BCH",
-  "bitcoin-gold": "BTG",
-  "dash": "DSH",
-  "digibyte": "DGB",
-  "digibyte-groestl": "DGB",
-  "digibyte-skein": "DGB",
-  "digibyte-qubit": "DGB",
-  "ethereum": "ETH",
-  "ethereum-classic": "ETC",
-  "expanse": "EXP",
-  "feathercoin": "FTC",
-  "gamecredits": "GAME",
-  "geocoin": "GEO",
-  "globalboosty": "BSTY",
-  "groestlcoin": "GRS",
-  "litecoin": "LTC",
-  "maxcoin": "MAX",
-  "monacoin": "MONA",
-  "monero": "XMR",
-  "musicoin": "MUSIC",
-  "myriadcoin": "XMY",
-  "myriadcoin-skein": "XMY",
-  "myriadcoin-groestl": "XMY",
-  "myriadcoin-yescrypt": "XMY",
-  "sexcoin": "SXC",
-  "siacoin": "SC",
-  "startcoin": "START",
-  "verge": "XVG",
-  "vertcoin": "VTC",
-  "zcash": "ZEC",
-  "zclassic": "ZCL",
-  "zcoin": "XZC",
-  "zencash": "ZEN"
+      "adzcoin": "ADZ",
+      "auroracoin": "AUR",
+      "bitcoin": "BTC",
+      "bitcoin-cash": "BCH",
+      "bitcoin-gold": "BTG",
+      "dash": "DSH",
+      "digibyte": "DGB",
+      "digibyte-groestl": "DGB",
+      "digibyte-skein": "DGB",
+      "digibyte-qubit": "DGB",
+      "ethereum": "ETH",
+      "ethereum-classic": "ETC",
+      "expanse": "EXP",
+      "feathercoin": "FTC",
+      "gamecredits": "GAME",
+      "geocoin": "GEO",
+      "globalboosty": "BSTY",
+      "groestlcoin": "GRS",
+      "litecoin": "LTC",
+      "maxcoin": "MAX",
+      "monacoin": "MONA",
+      "monero": "XMR",
+      "musicoin": "MUSIC",
+      "myriadcoin": "XMY",
+      "myriadcoin-skein": "XMY",
+      "myriadcoin-groestl": "XMY",
+      "myriadcoin-yescrypt": "XMY",
+      "sexcoin": "SXC",
+      "siacoin": "SC",
+      "startcoin": "START",
+      "verge": "XVG",
+      "vertcoin": "VTC",
+      "zcash": "ZEC",
+      "zclassic": "ZCL",
+      "zcoin": "XZC",
+      "zencash": "ZEN"
 }
 
 def get_value(symbol, amount, compare=args.c):
-  """
+    """
     Convert some amount of some coin, into the currency specified by -c
-  """
-  if symbol.upper() == compare.upper():
-    return amount
-  url = "https://api.cryptonator.com/api/ticker/{}-{}".format(symbol.lower(), compare.lower())
-  raw_response = requests.get(url).text
-  response = json.loads(raw_response)
-  price = response["ticker"]["price"]
-  value = float(price) * float(amount)
-  return value
+    """
+    if symbol.upper() == compare.upper():
+        return amount
+    url = "https://api.cryptonator.com/api/ticker/{}-{}".format(symbol.lower(), compare.lower())
+    raw_response = requests.get(url).text
+    response = json.loads(raw_response)
+    price = response["ticker"]["price"]
+    value = float(price) * float(amount)
+    return value
 
 
 
-def main():    
+def main():
     log_filename  = datetime.date.today().strftime('Data\monitorlog_%Y-%m-%d.csv')
     should_write_header = 1
-    should_write_header = int(not (os.path.exists(log_filename)))    
+    should_write_header = int(not (os.path.exists(log_filename)))
     # Query the MPH API to get all current balances
-    while (True): 
+    while (True):
 
-        url = "https://miningpoolhub.com/index.php?page=api&action=getuserallbalances&api_key={}".format(args.a) 
-        raw_response = requests.get(url).text 
+        url = "https://miningpoolhub.com/index.php?page=api&action=getuserallbalances&api_key={}".format(args.a)
+        raw_response = requests.get(url).text
         response = json.loads(raw_response)
-        
+
         coindata = []
         coinheaders = []
-        
-          # Parse the response into a basic dictionary keyed on coin name
+
+        # Parse the response into a basic dictionary keyed on coin name
         coins = {}
         for coin in response["getuserallbalances"]["data"]:
-          symbol = symbols[coin["coin"]]
-          balance = sum([
-            coin["confirmed"],
-            coin["unconfirmed"],
-            coin["ae_confirmed"],
-            coin["ae_unconfirmed"],
-            coin["exchange"]
-               ])
-          coins[symbol] = balance
-          if(balance != 0):
-              coinheaders.extend([symbol])
-              coindata.extend([balance])
-                    
-        
+            symbol = symbols[coin["coin"]]
+            balance = sum([
+                coin["confirmed"],
+                coin["unconfirmed"],
+                coin["ae_confirmed"],
+                coin["ae_unconfirmed"],
+                coin["exchange"]
+                   ])
+            coins[symbol] = balance
+            if(balance != 0):
+                coinheaders.extend([symbol])
+                coindata.extend([balance])
+
+
           # Get the total value of all the coin balances
         value = sum([get_value(coin, coins[coin], args.c) for coin in coins])
         fiat_value = get_value(args.c, value, args.f)
-        
+
           # Print report
 
-#        coindata.exend([int(time.time()),value,round(fiat_value, 3)])
-#        coinheaders.extend(["time","BTC_total_value","Fiat_total_value"])
+#       coindata.exend([int(time.time()),value,round(fiat_value, 3)])
+#       coinheaders.extend(["time","BTC_total_value","Fiat_total_value"])
         coindata = [int(time.time()),value,round(fiat_value, 3)] + coindata
         coinheaders = ["Time","BTC_total_value","Fiat_total_value"] + coinheaders
-        
-        
+
+        if should_write_header:
+            with open(log_filename, 'a') as f:
+                Writer = csv.writer(f)
+                print(coinheaders)
+                Writer.writerow(coinheaders)
+                should_write_header = 0
+
+
+
         with open(log_filename, 'ab') as f:
             Writer = csv.writer(f)
-            
-            if should_write_header:
-                    print(coinheaders)
-                    Writer.writerow(coinheaders)
-                    should_write_header = 0
             Writer.writerow(coindata)
         print(coindata)
         time.sleep(1)
-    
+
 if __name__ == "__main__":
     main()
