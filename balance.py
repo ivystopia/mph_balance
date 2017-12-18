@@ -7,8 +7,13 @@ import argparse
 import json
 import time
 
+
+filename = "apikey.txt"
+f = open(filename, 'r')
+key = f.readline().rstrip()
+
 parser = argparse.ArgumentParser(description="Estimate total balance of a MPH account")
-parser.add_argument('-a', metavar='api_key', required=True, help='API key from account settings page')
+parser.add_argument('-a', metavar='api_key', default = key, help='API key from account settings page')
 parser.add_argument('-f', metavar='fiat_currency', default='gbp', help='Which fiat currency to display total in')
 parser.add_argument('-c', metavar='currency', default='btc', help='Which exchange currency to display total in (default btc)')
 parser.add_argument('-o', metavar='output', default='text', choices=["text", "csv"], help='Output format. "text" (default) or csv')
