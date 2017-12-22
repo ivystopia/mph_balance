@@ -82,10 +82,10 @@ def get_value(symbol, amount, compare=args.c):
 	else:
 		return 0 #returns zero if the coin is not on the ticker website
 
-
+#log_filename  = datetime.date.today().strftime('Data\monitorlog_%Y-%m-%d.csv')
 
 def main():
-	log_filename  = datetime.date.today().strftime('Data\monitorlog_%Y-%m-%d.csv')
+	log_filename  = ('Data\monitorlog.csv')
 	should_write_header = 1
 	should_write_header = int(not (os.path.exists(log_filename)))
 	# Query the MPH API to get all current balances
