@@ -15,7 +15,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import datetime
 
-df = pd.read_csv('Data/monitorlog_2017-12-21.csv')
+df = pd.read_csv('Data/monitorlog.csv')
 
 time = df['Time']
 BTC = df['BTC_total_value']
@@ -32,8 +32,7 @@ ax2 = plt.subplot(122)
 ax2.set_title('Fiat')
 ax2.plot(time,Fiat)
 
-
-
+plt.show()
 
   
     

@@ -137,7 +137,7 @@ def main():
 		with open(log_filename, 'a') as f:
 			Writer = csv.writer(f, lineterminator='\n')
 			Writer.writerow(coindata)
-		print(coindata)
+		#print(coindata)
 		time.sleep(50)
 
 if __name__ == "__main__":
