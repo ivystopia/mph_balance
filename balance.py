@@ -84,61 +84,58 @@ def get_value(symbol, amount, compare=args.c):
 
 #log_filename  = datetime.date.today().strftime('Data\monitorlog_%Y-%m-%d.csv')
 
-def main():
+def obtain_mph_balance():
 	log_filename  = ('Data\monitorlog.csv')
 	should_write_header = 1
 	should_write_header = int(not (os.path.exists(log_filename)))
 	# Query the MPH API to get all current balances
-	while (True):
-
-		url = "https://miningpoolhub.com/index.php?page=api&action=getuserallbalances&api_key={}".format(args.a)
-		raw_response = requests.get(url).text
-		response = json.loads(raw_response)
-		coindata = []
-		coinheaders = []
+	
+	url = "https://miningpoolhub.com/index.php?page=api&action=getuserallbalances&api_key={}".format(args.a)
+	raw_response = requests.get(url).text
+	response = json.loads(raw_response)
+	coindata = []
+	coinheaders = []
 
 		# Parse the response into a basic dictionary keyed on coin name
-		coins = {}
-		for coin in response["getuserallbalances"]["data"]:
-			symbol = symbols[coin["coin"]]
-			balance = sum([
-				coin["confirmed"],
-				coin["unconfirmed"],
-				coin["ae_confirmed"],
-				coin["ae_unconfirmed"],
-				coin["exchange"]
-				   ])
-			coins[symbol] = balance
-			if(balance != 0):
-				coinheaders.extend([symbol])
-				coindata.extend([balance])
+	coins = {}
+	for coin in response["getuserallbalances"]["data"]:
+		symbol = symbols[coin["coin"]]
+		balance = sum([
+			coin["confirmed"],
+			coin["unconfirmed"],
+			coin["ae_confirmed"],
+			coin["ae_unconfirmed"],
+			coin["exchange"]
+			   ])
+		coins[symbol] = balance
+		if(balance != 0):
+			coinheaders.extend([symbol])
+			coindata.extend([balance])
 
 
 		  # Get the total value of all the coin balances
-		value = sum([get_value(coin, coins[coin], args.c) for coin in coins])
-		fiat_value = get_value(args.c, value, args.f)
+	value = sum([get_value(coin, coins[coin], args.c) for coin in coins])
+	fiat_value = get_value(args.c, value, args.f)
 
-		  # Print report
+	  # Print report
 
-#	   coindata.exend([int(time.time()),value,round(fiat_value, 3)])
-#	   coinheaders.extend(["time","BTC_total_value","Fiat_total_value"])
-		coindata = [int(time.time()),value,round(fiat_value, 3)] + coindata
-		coinheaders = ["Time","BTC_total_value","Fiat_total_value"] + coinheaders
+	coindata = [int(time.time()),value,round(fiat_value, 3)] + coindata
+	coinheaders = ["Time","BTC_total_value","Fiat_total_value"] + coinheaders
 
-		if should_write_header:
-			with open(log_filename, 'w') as f:
-				Writer = csv.writer(f, lineterminator='\n')
-				print(coinheaders)
-				Writer.writerow(coinheaders)
-				should_write_header = 0
-
-
-
-		with open(log_filename, 'a') as f:
+	if should_write_header:
+		with open(log_filename, 'w') as f:
 			Writer = csv.writer(f, lineterminator='\n')
-			Writer.writerow(coindata)
-		#print(coindata)
-		time.sleep(50)
+			print(coinheaders)
+			Writer.writerow(coinheaders)
+			should_write_header = 0
 
-if __name__ == "__main__":
-	main()
+
+
+	with open(log_filename, 'a') as f:
+		Writer = csv.writer(f, lineterminator='\n')
+		Writer.writerow(coindata)
+	#print(coindata)
+	time.sleep(50)
+
+#if __name__ == "__main__":
+#	main()
