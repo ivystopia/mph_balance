@@ -11,6 +11,7 @@ import datetime
 import os
 import numpy as np
 import sys
+import pandas as pd
 
 filename = "defaults.txt"
 f = open(filename, 'r')
@@ -74,22 +75,24 @@ def get_value(symbol, amount, compare=args.c):
     """
     if symbol.upper() == compare.upper():
         return amount
-    
+    #sometimes the API does not respond so this loop tri
     num_attempts = 10
     for attempt in range(num_attempts):
         url = "https://api.cryptonator.com/api/ticker/{}-{}".format(symbol.lower(), compare.lower())
         raw_response = requests.get(url).text    
-        print("ticker " +symbol + " attempt #" + str(attempt + 1))
+        
         try:
             response = json.loads(raw_response)
             if(response["success"]):
                 price = response["ticker"]["price"]
                 value = float(price) * float(amount)
+                print("Successfully obtained data for " +symbol)
                 return value
             else:
+                print(symbol + " is not on ticker website")
                 return 0 #returns zero if the coin is not on the ticker website
         except json.decoder.JSONDecodeError:
-            print("JSON decode error from ticker " + symbol)
+            print("JSON decode error from ticker " + symbol + " in attempt #" + str(attempt + 1))
             time.sleep(10)
             print("Trying again...")
             
@@ -128,22 +131,31 @@ def obtain_mph_balance():
 
 
           # Get the total value of all the coin balances
-    valuelist = {}
-    value = 0
+    
+    value_total = 0
+    valuelist = []
+    #TODO:need to improve pandas handling here
+    #getting btc value for each coin and making a new datafram for printing 
     for coin in coins:
-        valuelist[coin] = get_value(coin, coins[coin], "btc")
-        value = value + valuelist[coin]
-    fiat_value = get_value("btc", value, "usd")
+        value_new = get_value(coin, coins[coin], "btc")
+        valuelist.append([coin,coins[coin],value_new])
+        value_total = value_total + value_new
+    fiat_value = get_value("btc", value_total, "usd")
     
+    #convert the list into a dataframe and set the index to the ticker name
+    valuelist = pd.DataFrame(valuelist, columns = ['ticker','amount','value'])
+    valuelist = valuelist.sort_values(by = ['value'],ascending = False)
+    valuelist = valuelist.set_index('ticker')
     
+    #clear the screen and print the amount of each coin
     os.system('clear')
-    for coin in valuelist:
-        print(coin +": " + str(coins[coin]) + " worth " + str(valuelist[coin]) + " BTC ")
-    print("Total Value (BTC): " + str(value))
+    for coin,row in valuelist.iterrows():
+        print(coin + ": "+ str(row['amount']) + " worth " + str(row['value']) + " BTC")
+    print("Total Value (BTC): " + str(value_total))
     print("Total Value (USD): " + str(fiat_value))
       # Print report
 
-    coindata = [int(time.time()),value,round(fiat_value, 3)] + coindata
+    coindata = [int(time.time()),value_total,round(fiat_value, 3)] + coindata
     coinheaders = ["Time","BTC_total","Fiat_total"] + coinheaders
 
     if should_write_header:
