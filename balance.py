@@ -90,7 +90,7 @@ def get_value(symbol, amount, compare=args.c):
                 return 0 #returns zero if the coin is not on the ticker website
         except json.decoder.JSONDecodeError:
             print("JSON decode error from ticker " + symbol + ", trying again...")
-            time.sleep(1)
+            time.sleep(10)
             
     sys.exit("couldn't get response from website")
     return 0
@@ -143,7 +143,7 @@ def obtain_mph_balance():
       # Print report
 
     coindata = [int(time.time()),value,round(fiat_value, 3)] + coindata
-    coinheaders = ["Time","BTC_total_value","Fiat_total_value"] + coinheaders
+    coinheaders = ["Time","BTC_total","Fiat_total"] + coinheaders
 
     if should_write_header:
         with open(log_filename, 'w') as f:
@@ -158,7 +158,7 @@ def obtain_mph_balance():
         Writer = csv.writer(f, lineterminator='\n')
         Writer.writerow(coindata)
     #print(coindata)
-    time.sleep(50)
+    #time.sleep(50)
 
 #if __name__ == "__main__":
 #    main()

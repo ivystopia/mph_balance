@@ -9,6 +9,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 import datetime as dt
 import os
+import sys
+
+
+def getopts(argv):
+    opts = {}  # Empty dictionary to store key-value pairs.
+    while argv:  # While there are arguments left to parse...
+        if argv[0][0] == '-':  # Found a "-name value" pair.
+            opts[argv[0]] = argv[1]  # Add key and value to the dictionary.
+        argv = argv[1:]  # Reduce the argument list by copying it starting from index 1.
+    return opts
+
+
 
 def converttimestamp(stamp):
 	return dt.datetime.fromtimestamp(int(stamp)).strftime('%Y-%m-%d %H:%M:%S')
@@ -28,8 +40,6 @@ def read_from_csv(window = None, endtime = None):
     rawtext_read = pd.read_csv('Data/monitorlog.csv', encoding = "ISO-8859-1")
     
     time = rawtext_read['Time']
-    BTC = rawtext_read['BTC_total_value']
-    Fiat = rawtext_read['Fiat_total_value']
 
     if endtime == None:
         endtime = time.iloc[-1]
@@ -46,13 +56,25 @@ def read_from_csv(window = None, endtime = None):
     endtimestr = str(utc_to_local(dt.datetime.fromtimestamp(endtime)))
 
     print("Reading file from " + starttimestr + " to " + endtimestr)
-    print("contains " + str(index_end - index_start) + " comments")
+    print("contains " + str(index_end - index_start) + " data points")
+    
+    #rawtext_read.set_index(rawtext_read['Time'])
+    #print(str(rawtext_read.index[0]))
+    rawtext_read = rawtext_read.truncate(before = index_start, after = index_end)
+    
+    #rawtext_read = rawtext
+    
+#    
+#    BTC = rawtext_read['BTC_total_value']
+#    Fiat = rawtext_read['Fiat_total_value']
+#    
+#
+#
+#    time = time[index_start:index_end]
+#    BTC = BTC[index_start:index_end]
+#    Fiat = Fiat[index_start:index_end]
 
-    time = time[index_start:index_end]
-    BTC = BTC[index_start:index_end]
-    Fiat = Fiat[index_start:index_end]
-
-    return time, BTC, Fiat
+    return rawtext_read
 
 def convert_unixarray_timesamparray(intarray_unix):
     datetimearray=[]
@@ -62,31 +84,52 @@ def convert_unixarray_timesamparray(intarray_unix):
     return datetimearray
 
 	
-window = 30*24*60*60
+if __name__ == '__main__':
+    from sys import argv
+    myargs = getopts(argv)
+    if '-w' in myargs:  # Example usage. 
+        days = int(myargs['-w'])#
+    else:
+        days = 30
 
-time, BTC, Fiat = read_from_csv(window)
+    window = days*24*60*60
+    
+    data = read_from_csv(window)
+    
+    
+    datetimedata = pd.to_datetime(data['Time'], unit = 's')
+    datetimedata = datetimedata.dt.strftime('%Y-%m-%d')
+    
+    #data['Time']  = data['Time'].dt.strftime('%Y-%m-%d')
+    
+    titlestr = "Plotting " + str(days) + " Days, From " + str(datetimedata.iloc[0])  + " to " + str(datetimedata.iloc[-1])
+    
+    data.plot(x='Time', subplots = True, layout = (3,6), title = titlestr, marker = 'o', fontsize = 7, sharex=True)
+    
+    figManager = plt.get_current_fig_manager()
+    figManager.window.showMaximized()
+    #plot.rcParams.update({'font.size': 9})
+    plt.show()
 
-time = convert_unixarray_timesamparray(time)
-
-#timeconvert = time.apply(converttimestamp)
-figsize = plt.figaspect(1/2)
-fig, axs = plt.subplots(1,2,figsize=figsize) 
-
-
-#ax1 = plt.subplot(121)
-axs[0].set_title('BTC')
-axs[0].plot(time,BTC)
-
-
-#ax2 = plt.subplot(122)
-axs[1].set_title('Fiat')
-axs[1].plot(time,Fiat)
-
-
-plt.tight_layout()
-fig.autofmt_xdate()
-plt.show()
-
+#time = convert_unixarray_timesamparray(time)
+#
+##timeconvert = time.apply(converttimestamp)
+#figsize = plt.figaspect(1/2)
+#fig, axs = plt.subplots(1,2,figsize=figsize) 
+#
+#
+##ax1 = plt.subplot(121)
+#axs[0].set_title('BTC')
+#axs[0].plot(time,BTC)
+#
+#
+##ax2 = plt.subplot(122)
+#axs[1].set_title('Fiat')
+#axs[1].plot(time,Fiat)
+#
+#
+#plt.tight_layout()
+#fig.autofmt_xdate()
   
 
     

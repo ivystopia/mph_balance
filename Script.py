@@ -25,7 +25,6 @@ from datetime import datetime, timedelta
 import time
 
 while 1:
-    print('.')
     obtain_mph_balance()
     
     dt = datetime.now() + timedelta(hours=1)
