@@ -89,8 +89,9 @@ def get_value(symbol, amount, compare=args.c):
             else:
                 return 0 #returns zero if the coin is not on the ticker website
         except json.decoder.JSONDecodeError:
-            print("JSON decode error from ticker " + symbol + ", trying again...")
+            print("JSON decode error from ticker " + symbol)
             time.sleep(10)
+            print("Trying again...")
             
     sys.exit("couldn't get response from website")
     return 0

@@ -20,15 +20,16 @@ Following configurations are set for the scheduler:
 
 from balance import obtain_mph_balance
 
-from datetime import datetime, timedelta
+import datetime as dt
 
 import time
 
 while 1:
     obtain_mph_balance()
+    print("Updated at " + str(dt.datetime.now()))
     
-    dt = datetime.now() + timedelta(hours=1)
-    dt = dt.replace(minute=10)
+    finaltime = dt.datetime.now() + dt.timedelta(hours=1)
+    finaltime = finaltime.replace(minute=10)
 
-    while datetime.now() < dt:
+    while dt.datetime.now() < finaltime:
         time.sleep(1)

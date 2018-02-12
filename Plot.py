@@ -104,7 +104,7 @@ if __name__ == '__main__':
     
     titlestr = "Plotting " + str(days) + " Days, From " + str(datetimedata.iloc[0])  + " to " + str(datetimedata.iloc[-1])
     
-    data.plot(x='Time', subplots = True, layout = (3,6), title = titlestr, marker = 'o', fontsize = 7, sharex=True)
+    data.plot(x='Time', subplots = True, layout = (3,6), title = titlestr, marker = 'o', fontsize = 7)
     
     figManager = plt.get_current_fig_manager()
     figManager.window.showMaximized()
