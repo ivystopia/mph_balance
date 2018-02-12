@@ -150,7 +150,7 @@ def obtain_mph_balance():
     #clear the screen and print the amount of each coin
     os.system('clear')
     for coin,row in valuelist.iterrows():
-        print(coin + ": "+ str(row['amount']) + " worth " + str(row['value']) + " BTC")
+        print(coin + ": "+ str(row['amount']) + " worth " + str(round(row['value']*1000,4)) + " mBTC")
     print("Total Value (BTC): " + str(value_total))
     print("Total Value (USD): " + str(fiat_value))
       # Print report
